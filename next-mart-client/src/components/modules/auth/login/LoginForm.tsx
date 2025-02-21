@@ -1,5 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import ReCAPTCHA from "react-google-recaptcha";
+
 import {
   Form,
   FormControl,
@@ -9,22 +11,39 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { loginUser} from "@/services/AuthService";
+import { loginUser, reCaptchaTokenVerification } from "@/services/AuthService";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 
 import { toast } from "sonner";
 import { loginSchema } from "./loginValidation";
+import { useState } from "react";
 
 const LoginForm = () => {
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
 
+  const [reCaptchStatus,setReCaptchStatus]=useState(false)
+
   const {
     formState: { isSubmitted },
   } = form;
+
+  const handleReCaptcha =async (value: string | null) => {
+    try{
+      const res=await reCaptchaTokenVerification(value!)
+
+      if(res?.success){
+setReCaptchStatus(true)
+      }
+
+    }catch(err:any){
+      console.log(err)
+    }
+
+  };
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     try {
@@ -75,7 +94,17 @@ const LoginForm = () => {
             )}
           />
 
-          <Button type="submit" className="mt-5 w-full">
+          <div className="flex w-full ">
+            <ReCAPTCHA
+              sitekey={process.env.NEXT_PUBLIC_RECAPTCHA_CLIENT_KEY!}
+              onChange={handleReCaptcha}
+              className="mx-auto mt-2"
+            />
+          </div>
+
+          <Button 
+          disabled={reCaptchStatus?false:true}
+          type="submit" className="mt-5 w-full">
             {isSubmitted ? "Loging.........." : "Login"}
           </Button>
         </form>
@@ -83,7 +112,7 @@ const LoginForm = () => {
       <p className="text-sm text-gray-600 text-center my-3">
         Don`t have any account ?
         <Link href="/register" className="text-primary">
-           Register
+          Register
         </Link>
       </p>
     </div>
