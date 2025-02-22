@@ -14,17 +14,21 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { createShop } from "@/services/Shop";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
+import { createShopValidation } from "./createShopValidation";
 
 export default function CreateShopForm() {
   const [imageFiles, setImageFiles] = useState<File[] | []>([]);
   const [imagePreview, setImagePreview] = useState<string[] | []>([]);
 
-  const form = useForm();
+  const form = useForm({ resolver: zodResolver(createShopValidation) });
 
-  const {formState:{isSubmitting},}=form
+  const {
+    formState: { isSubmitting },
+  } = form;
 
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     const servicesOffered = data?.servicesOffered
@@ -42,7 +46,7 @@ export default function CreateShopForm() {
       formData.append("logo", imageFiles[0] as File);
 
       const res = await createShop(formData);
-      console.log(res,'res')
+      console.log(res, "res");
       if (res.success) {
         toast.success(res.message);
       }
@@ -237,7 +241,7 @@ export default function CreateShopForm() {
           </div>
 
           <Button type="submit" className="mt-5 w-full">
-           { isSubmitting?"Creating...":"create"}
+            {isSubmitting ? "Creating..." : "create"}
           </Button>
         </form>
       </Form>
