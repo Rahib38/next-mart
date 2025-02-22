@@ -11,7 +11,7 @@ const auth = (...requiredRoles: UserRole[]) => {
    return catchAsync(
       async (req: Request, res: Response, next: NextFunction) => {
          const token = req.headers.authorization;
-
+console.log(token,'sujon vair token')
          if (!token) {
             throw new AppError(
                StatusCodes.UNAUTHORIZED,
