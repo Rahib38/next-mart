@@ -19,8 +19,15 @@ import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { loginSchema } from "./loginValidation";
 import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 const LoginForm = () => {
+
+  const searchParams = useSearchParams()
+  const redirect= searchParams.get('redirectPath')
+  const router= useRouter()
+
+
   const form = useForm({
     resolver: zodResolver(loginSchema),
   });
@@ -50,6 +57,16 @@ setReCaptchStatus(true)
       const res = await loginUser(data);
       if (res?.success) {
         toast.success(res?.message);
+
+        if(redirect){
+          router.push(redirect)
+        }else{
+          router.push("/profile")
+
+        }
+
+
+
       } else {
         toast.error(res?.message);
       }
