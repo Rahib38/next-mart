@@ -11,18 +11,26 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
+import { protectRoutes } from "@/contants";
 import { useUser } from "@/context/UserContext";
 import { logout } from "@/services/AuthService";
 
 import { Heart, LogOut, Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 
 export default function Navbar() {
   const { user, setIsLoading } = useUser();
 
+  const pathname=usePathname()
+  const router=useRouter()
+
   const handleLogOut = () => {
     logout();
     setIsLoading(true);
+    if(protectRoutes.some((route)=>pathname.match(route))){
+      router.push('/')
+    }
   };
 
   return (
