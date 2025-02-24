@@ -111,7 +111,7 @@ const CreateCategoryModal = () => {
               </div>
 
               <Button type="submit" className="mt-5 w-full">
-                {isSubmitted ? "Loging.........." : "Login"}
+                {isSubmitted ? "Creating.........." : "Create"}
               </Button>
             </form>
           </Form>
