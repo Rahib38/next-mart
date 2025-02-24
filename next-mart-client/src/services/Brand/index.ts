@@ -12,6 +12,7 @@ export const createBrand = async (data: FormData) => {
       },
       body: data,
     });
+    revalidateTag('BRAND')
     return res.json();
   } catch (error: any) {
     return Error(error);
